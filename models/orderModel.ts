@@ -1,7 +1,14 @@
 const mongoose = require("mongoose");
 import { Schema, model, Document, Types } from "mongoose";
 
-// Define an Interface for Order Document
+// Define Item Structure (Replace 'any' with actual properties if known)
+interface IItem {
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+// Define Order Interface
 export interface IOrder extends Document {
   customerDetails: {
     name: string;
@@ -15,8 +22,8 @@ export interface IOrder extends Document {
     tax: number;
     totalWithTax: number;
   };
-  items: any[]; // Replace 'any' with actual item structure if known
-  table?: Types.ObjectId; // Use 'Types.ObjectId' instead of 'mongoose.Schema.Types.ObjectId'
+  items: IItem[]; // Array of Item objects
+  table?: Types.ObjectId; // Reference to Table
   paymentMethod?: string;
   paymentData?: {
     razorpay_order_id?: string;
@@ -41,7 +48,13 @@ const orderSchema = new Schema<IOrder>(
       tax: { type: Number, required: true },
       totalWithTax: { type: Number, required: true },
     },
-    items: { type: Array, default: [] },
+    items: [
+      {
+        name: { type: String, required: true },
+        price: { type: Number, required: true },
+        quantity: { type: Number, required: true },
+      },
+    ], // Define as an array of objects
     table: { type: Schema.Types.ObjectId, ref: "Table" },
     paymentMethod: { type: String },
     paymentData: {
