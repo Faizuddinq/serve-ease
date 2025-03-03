@@ -1,5 +1,5 @@
 const express = require("express");
-const connectDB = require("./config/database");
+const connectDB = require("./config/db");
 const configuration = require("./config/config");
 const globalErrHandler = require("./middlewares/globalErrorHandler");
 const cookieParser = require("cookie-parser");
@@ -28,10 +28,10 @@ app.get("/", (req: any, res: any) => {
 });
 
 // API Routes
-app.use("/api/user", require("./routes/userRoute"));
-app.use("/api/order", require("./routes/orderRoute"));
-app.use("/api/table", require("./routes/tableRoute"));
-app.use("/api/payment", require("./routes/paymentRoute"));
+// app.use("/api/user", require("./routes/userRoute"));
+// app.use("/api/order", require("./routes/orderRoute"));
+// app.use("/api/table", require("./routes/tableRoute"));
+// app.use("/api/payment", require("./routes/paymentRoute"));
 
 // Global Error Handler Middleware
 app.use(globalErrHandler);
