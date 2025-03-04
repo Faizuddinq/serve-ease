@@ -82,22 +82,22 @@ const login = async (req: LoginRequest, res: Response, next: NextFunction) => {
 };
 
 // **Get User Data**
-// const getUserData = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     if (!req.user) {
-//       return next(createHttpError(401, "Unauthorized: No user found in request!"));
-//     }
+const getUserData = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.user) {
+      return next(createHttpError(401, "Unauthorized: No user found in request!"));
+    }
 
-//     const user = await User.findById(req.user._id);
-//     if (!user) {
-//       return next(createHttpError(404, "User not found!"));
-//     }
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return next(createHttpError(404, "User not found!"));
+    }
 
-//     res.status(200).json({ success: true, data: user });
-//   } catch (error) {
-//     next(createHttpError(500, "An error occurred while fetching user data!"));
-//   }
-// };
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    next(createHttpError(500, "An error occurred while fetching user data!"));
+  }
+};
 
 
 // **User Logout**
