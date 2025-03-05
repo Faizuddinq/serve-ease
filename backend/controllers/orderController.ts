@@ -1,10 +1,10 @@
 const createHttpError = require("http-errors");
 const Order = require("../models/Order.model");
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 import { Request, Response, NextFunction } from "express";
 
 // Define Request Interfaces for Type Safety
-interface OrderRequestBody {
+interface OrderRequest {
   customerDetails: {
     name: string;
     phone: string;
@@ -30,7 +30,7 @@ interface OrderRequestBody {
 }
 
 // **Add Order**
-const addOrder = async (req: Request<{}, {}, OrderRequestBody>, res: Response, next: NextFunction) => {
+const addOrder = async (req: Request<{}, {}, OrderRequest>, res: Response, next: NextFunction) => {
   try {
     const order = new Order(req.body);
     await order.save();
