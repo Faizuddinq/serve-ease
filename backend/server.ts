@@ -40,5 +40,5 @@ app.use(globalErrHandler);
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`☑️  POS Server is listening on port ${PORT}`);
+  console.log(`☑️  POS Server is listening on port http://localhost:${PORT}`);
 });

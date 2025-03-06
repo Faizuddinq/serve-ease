@@ -12,4 +12,3 @@ router.put("/:id", isVerifiedUser, updateOrder);
 router.delete("/:id", isVerifiedUser, deleteOrder);
 
 module.exports = router;
-
