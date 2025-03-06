@@ -1,10 +1,10 @@
 const createHttpError = require("http-errors");
 const Order = require("../models/Order.model");
-const mongoose = require("mongoose");
+const { default: mongoose } = require("mongoose");
 import { Request, Response, NextFunction } from "express";
 
 // Define Request Interfaces for Type Safety
-interface OrderRequest {
+interface OrderRequestBody {
   customerDetails: {
     name: string;
     phone: string;
@@ -30,7 +30,7 @@ interface OrderRequest {
 }
 
 // **Add Order**
-const addOrder = async (req: Request<{}, {}, OrderRequest>, res: Response, next: NextFunction) => {
+const addOrder = async (req: Request<{}, {}, OrderRequestBody>, res: Response, next: NextFunction) => {
   try {
     const order = new Order(req.body);
     await order.save();
@@ -71,9 +71,46 @@ const getOrders = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // **Update Order**
+const updateOrder = async (req: Request<{ id: string }, {}, { orderStatus: string }>, res: Response, next: NextFunction) => {
+  try {
+    const { orderStatus } = req.body;
+    const { id } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return next(createHttpError(400, "Invalid order ID!"));
+    }
+
+    const order = await Order.findByIdAndUpdate(id, { orderStatus }, { new: true });
+
+    if (!order) {
+      return next(createHttpError(404, "Order not found!"));
+    }
+
+    res.status(200).json({ success: true, message: "Order updated!", data: order });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // **Delete Order**
+const deleteOrder = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return next(createHttpError(400, "Invalid order ID!"));
+    }
 
-module.exports = { addOrder, getOrderById, getOrders };
+    const order = await Order.findByIdAndDelete(id);
+
+    if (!order) {
+      return next(createHttpError(404, "Order not found!"));
+    }
+
+    res.status(200).json({ success: true, message: "Order deleted successfully!" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { addOrder, getOrderById, getOrders, updateOrder, deleteOrder };
