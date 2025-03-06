@@ -4,26 +4,10 @@ const bcrypt = require("bcrypt");
 const { generateAccessToken, setTokenCookie } = require("../utils/tokenSender");
 import { Request, Response, NextFunction } from "express";
 
-// Define Request Interfaces for Type Safety
-interface RegisterRequest extends Request {
-  body: {
-    name: string;
-    phone: string;
-    email: string;
-    password: string;
-    role: string;
-  };
-}
-
-interface LoginRequest extends Request {
-  body: {
-    email: string;
-    password: string;
-  };
-}
+import { AuthRequest } from "../types/customType"; // Import extended Request type
 
 // **Register New User**
-const register = async (req: RegisterRequest, res: Response, next: NextFunction) => {
+const register = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { name, phone, email, password, role } = req.body;
 
@@ -49,7 +33,7 @@ const register = async (req: RegisterRequest, res: Response, next: NextFunction)
 };
 
 // **User Login**
-const login = async (req: LoginRequest, res: Response, next: NextFunction) => {
+const login = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
 
@@ -82,7 +66,7 @@ const login = async (req: LoginRequest, res: Response, next: NextFunction) => {
 };
 
 // **Get User Data**
-const getUserData = async (req: Request, res: Response, next: NextFunction) => {
+const getUserData = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     if (!req.user) {
       return next(createHttpError(401, "Unauthorized: No user found in request!"));
@@ -99,9 +83,8 @@ const getUserData = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-
 // **User Logout**
-const logout = async (req: Request, res: Response, next: NextFunction) => {
+const logout = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     res.clearCookie("accessToken");
     res.status(200).json({ success: true, message: "User logged out successfully!" });
@@ -110,4 +93,4 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-module.exports = { register, login, getUserData, logout };
+export { register, login, getUserData, logout };

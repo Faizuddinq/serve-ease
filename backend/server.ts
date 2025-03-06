@@ -4,7 +4,9 @@ const configuration = require("./config/config");
 const globalErrHandler = require("./middlewares/globalErrorHandler");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-
+const authRoute = require("./routes/userRoute")
+const orderRoute = require("./routes/orderRoute")
+const tableRoute = require("./routes/tableRoute")
 // Initialize Express App
 const app = express();
 const PORT: number = configuration.port;
@@ -16,7 +18,7 @@ connectDB();
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173"], //frontend cors url
   })
 );
 app.use(express.json()); // Parse incoming JSON request
@@ -28,9 +30,9 @@ app.get("/", (req: any, res: any) => {
 });
 
 // API Routes
-app.use("/api/auth", require("./routes/userRoute"));
-app.use("/api/order", require("./routes/orderRoute"));
-app.use("/api/table", require("./routes/tableRoute"));
+app.use("/api/auth", authRoute);
+app.use("/api/order", orderRoute);
+app.use("/api/table", tableRoute);
 // app.use("/api/payment", require("./routes/paymentRoute"));
 
 // Global Error Handler Middleware

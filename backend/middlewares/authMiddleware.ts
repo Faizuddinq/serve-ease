@@ -3,9 +3,9 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const User = require("../models/userModel");
 import { Request, Response, NextFunction } from "express";
+import { AuthRequest } from "../types/customType";
 
-// Middleware to Verify User
-const isVerifiedUser = async (req: Request, res: Response, next: NextFunction) => {
+const isVerifiedUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { accessToken } = req.cookies;
 
@@ -14,10 +14,10 @@ const isVerifiedUser = async (req: Request, res: Response, next: NextFunction) =
     }
 
     // Verify Token
-    const decodeToken = jwt.verify(accessToken, config.accessTokenSecret) as { _id: string };
+    const decodedToken = jwt.verify(accessToken, config.accessTokenSecret) as { _id: string };
 
     // Find User in Database
-    const user = await User.findById(decodeToken._id);
+    const user = await User.findById(decodedToken._id);
     if (!user) {
       return next(createHttpError(401, "User does not exist!"));
     }
@@ -29,5 +29,6 @@ const isVerifiedUser = async (req: Request, res: Response, next: NextFunction) =
     next(createHttpError(401, "Invalid Token!"));
   }
 };
+
 
 module.exports = { isVerifiedUser };

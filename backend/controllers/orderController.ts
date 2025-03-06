@@ -1,5 +1,5 @@
 const createHttpError = require("http-errors");
-const Order = require("../models/Order.model");
+const Order = require("../models/orderModel");
 const { default: mongoose } = require("mongoose");
 import { Request, Response, NextFunction } from "express";
 

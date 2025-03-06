@@ -11,4 +11,4 @@ router.get("/", isVerifiedUser, getTables);
 router.put("/:id", isVerifiedUser, updateTable);
 router.delete("/:id", isVerifiedUser, deleteTable);
 
-export default router;
+module.exports = router;
