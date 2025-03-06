@@ -110,6 +110,4 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-module.exports = { register, 
-    // login, getUserData, logout 
-};
+module.exports = { register, login, getUserData, logout };
