@@ -11,4 +11,5 @@ router.get("/:id", isVerifiedUser, getOrderById);
 router.put("/:id", isVerifiedUser, updateOrder);
 router.delete("/:id", isVerifiedUser, deleteOrder);
 
-export default router;
+module.exports = router;
+

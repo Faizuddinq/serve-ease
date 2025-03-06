@@ -1,4 +1,4 @@
-const Table = require("../models/Table.model");
+const Table = require("../models/tableModel");
 const createHttpError = require("http-errors");
 const mongoose = require("mongoose");
 import { Request, Response, NextFunction } from "express";
