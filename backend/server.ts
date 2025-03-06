@@ -29,8 +29,8 @@ app.get("/", (req: any, res: any) => {
 
 // API Routes
 app.use("/api/auth", require("./routes/userRoute"));
-// app.use("/api/order", require("./routes/orderRoute"));
-// app.use("/api/table", require("./routes/tableRoute"));
+app.use("/api/order", require("./routes/orderRoute"));
+app.use("/api/table", require("./routes/tableRoute"));
 // app.use("/api/payment", require("./routes/paymentRoute"));
 
 // Global Error Handler Middleware
