@@ -1,13 +1,20 @@
 {
   "name": "serve-ease-backend",
-  
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --ext ts --exec ts-node server.ts",
-    "build": "tsc",
-    "start": "node server.js"
+    "build": "rimraf dist && tsc",
+    "start": "nodemon server.js",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ],
   "keywords": [],
   "author": "faiz-uddin",
   "license": "ISC",
@@ -22,7 +29,9 @@
     "http-errors": "^2.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.11.0",
-    "razorpay": "^2.9.6"
+    "pre-commit": "^1.2.2",
+    "razorpay": "^2.9.6",
+    "rimraf": "^6.0.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
