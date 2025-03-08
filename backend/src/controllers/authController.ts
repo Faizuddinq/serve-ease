@@ -3,7 +3,7 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const { generateAccessToken, setTokenCookie } = require("../utils/tokenSender");
 import { Request, Response, NextFunction } from "express";
-import { AuthRequest } from "../src/types/customType"; // Import extended Request type
+import { AuthRequest } from "../types/customType"; // Import extended Request type
 
 // **Register New User**
 const register = async (req: AuthRequest, res: Response, next: NextFunction) => {
