@@ -86,3 +86,4 @@ const deleteOrder = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 module.exports = { addOrder, getOrderById, getOrders, updateOrder, deleteOrder };
+//# sourceMappingURL=orderController.js.map

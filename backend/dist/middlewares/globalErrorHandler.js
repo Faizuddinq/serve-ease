@@ -11,3 +11,4 @@ const globalErrorHandler = (err, req, res, next) => {
     });
 };
 module.exports = globalErrorHandler;
+//# sourceMappingURL=globalErrorHandler.js.map

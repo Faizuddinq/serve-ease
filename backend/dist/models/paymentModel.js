@@ -16,3 +16,4 @@ const paymentSchema = new mongoose_1.Schema({
 }, { timestamps: true });
 // Export Payment Model
 module.exports = (0, mongoose_1.model)("Payment", paymentSchema);
+//# sourceMappingURL=paymentModel.js.map

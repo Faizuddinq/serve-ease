@@ -11,3 +11,4 @@ const tableSchema = new mongoose_1.Schema({
 }, { timestamps: true });
 // Export Table Model
 module.exports = (0, mongoose_1.model)("Table", tableSchema);
+//# sourceMappingURL=tableModel.js.map

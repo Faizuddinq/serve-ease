@@ -1,9 +1,8 @@
-"use strict";
 const jwt = require("jsonwebtoken");
-const config = require("../config/config");
+const appConfig = require("../config/config");
 // Generate Access Token
 const generateAccessToken = (userId) => {
-    return jwt.sign({ _id: userId }, config.accessTokenSecret, {
+    return jwt.sign({ _id: userId }, appConfig.accessTokenSecret, {
         expiresIn: "1d",
     });
 };
@@ -17,3 +16,4 @@ const setTokenCookie = (res, token) => {
     });
 };
 module.exports = { generateAccessToken, setTokenCookie };
+//# sourceMappingURL=tokenSender.js.map

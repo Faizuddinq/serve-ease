@@ -10,3 +10,4 @@ router.post("/login", login);
 router.post("/logout", isVerifiedUser, logout);
 router.get("/", isVerifiedUser, getUserData);
 module.exports = router;
+//# sourceMappingURL=userRoute.js.map
