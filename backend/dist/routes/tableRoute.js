@@ -9,3 +9,4 @@ router.get("/", isVerifiedUser, getTables);
 router.put("/:id", isVerifiedUser, updateTable);
 router.delete("/:id", isVerifiedUser, deleteTable);
 module.exports = router;
+//# sourceMappingURL=tableRoute.js.map

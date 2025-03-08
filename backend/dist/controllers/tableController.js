@@ -80,3 +80,4 @@ const deleteTable = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 module.exports = { addTable, getTables, updateTable, deleteTable };
+//# sourceMappingURL=tableController.js.map

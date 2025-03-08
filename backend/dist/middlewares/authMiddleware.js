@@ -35,3 +35,4 @@ const isVerifiedUser = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 module.exports = { isVerifiedUser };
+//# sourceMappingURL=authMiddleware.js.map

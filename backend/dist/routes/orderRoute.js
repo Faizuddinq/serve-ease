@@ -10,3 +10,4 @@ router.get("/:id", isVerifiedUser, getOrderById);
 router.put("/:id", isVerifiedUser, updateOrder);
 router.delete("/:id", isVerifiedUser, deleteOrder);
 module.exports = router;
+//# sourceMappingURL=orderRoute.js.map

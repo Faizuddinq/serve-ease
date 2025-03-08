@@ -32,3 +32,4 @@ const orderSchema = new mongoose_1.Schema({
 }, { timestamps: true });
 // Export Order Model
 module.exports = (0, mongoose_1.model)("Order", orderSchema);
+//# sourceMappingURL=orderModel.js.map

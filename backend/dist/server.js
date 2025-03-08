@@ -1,4 +1,3 @@
-"use strict";
 const express = require("express");
 const connectDB = require("./config/db");
 const configuration = require("./config/config");
@@ -35,3 +34,4 @@ app.use(globalErrHandler);
 app.listen(PORT, () => {
     console.log(`☑️  POS Server is listening on port http://localhost:${PORT}`);
 });
+//# sourceMappingURL=server.js.map
