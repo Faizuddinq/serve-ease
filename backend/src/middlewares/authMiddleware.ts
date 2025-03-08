@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const User = require("../models/userModel");
 import { Request, Response, NextFunction } from "express";
-import { AuthRequest } from "../types/customType";
+import { AuthRequest } from "../src/types/customType";
 
 const isVerifiedUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
