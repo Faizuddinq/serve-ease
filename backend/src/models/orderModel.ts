@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
 import { Schema, model, Document, Types } from "mongoose";
 
-// Define Item Structure (Replace 'any' with actual properties if known)
+// Define Item Structure
 interface IItem {
   name: string;
   price: number;
@@ -26,8 +25,8 @@ export interface IOrder extends Document {
   table?: Types.ObjectId; // Reference to Table
   paymentMethod?: string;
   paymentData?: {
-    razorpay_order_id?: string;
-    razorpay_payment_id?: string;
+    stripe_payment_intent_id?: string;
+    stripe_charge_id?: string;
   };
   createdAt?: Date;
   updatedAt?: Date;
@@ -54,16 +53,16 @@ const orderSchema = new Schema<IOrder>(
         price: { type: Number, required: true },
         quantity: { type: Number, required: true },
       },
-    ], // Define as an array of objects
+    ],
     table: { type: Schema.Types.ObjectId, ref: "Table" },
     paymentMethod: { type: String },
     paymentData: {
-      razorpay_order_id: { type: String },
-      razorpay_payment_id: { type: String },
+      stripe_payment_intent_id: { type: String }, // Stores PaymentIntent ID
+      stripe_charge_id: { type: String }, // Stores Charge ID
     },
   },
   { timestamps: true }
 );
 
 // Export Order Model
-module.exports = model<IOrder>("Order", orderSchema);
+export default model<IOrder>("Order", orderSchema);
