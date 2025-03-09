@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { isVerifiedUser } = require("../middlewares/tokenVerification");
+const { isVerifiedUser } = require("../middlewares/authMiddleware");
 const { createOrder, verifyPayment, webHookVerification } = require("../controllers/paymentController");
 
 import { Router } from "express";
