@@ -4,10 +4,11 @@ const configuration = require("./config/config");
 const globalErrHandler = require("./middlewares/globalErrorHandler");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const authRoute = require("./routes/userRoute")
-const orderRoute = require("./routes/orderRoute")
-const tableRoute = require("./routes/tableRoute")
-const paymentRoute = require("./routes/paymentRoute")
+const authRoute = require("./routes/userRoute");
+const orderRoute = require("./routes/orderRoute");
+const tableRoute = require("./routes/tableRoute");
+const paymentRoute = require("./routes/paymentRoute");
+
 // Initialize Express App
 const app = express();
 const PORT: number = configuration.port;
@@ -15,18 +16,38 @@ const PORT: number = configuration.port;
 // Connect to Database
 connectDB();
 
+// CORS Configuration
+const allowedOrigins: string[] = [
+  "http://localhost:5173",
+  "https://serve-ease-frontend.vercel.app",
+  "https://www.serve-ease-frontend.vercel.app",
+  "http://serve-ease-frontend.vercel.app",
+  "http://www.serve-ease-frontend.vercel.app",
+];
+
+/**
+ * @type {import("cors").CorsOptions}
+ */
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
 // Middleware
-app.use(
-  cors({
-    credentials: true,
-    origin: ["http://localhost:5173"], //frontend cors url
-  })
-);
+app.use(cors(corsOptions));
 app.use(express.json()); // Parse incoming JSON request
 app.use(cookieParser());
 
 // Root Endpoint
-app.get("/", (req: any, res: any) => {
+app.get("/", (req: import("express").Request, res: import("express").Response) => {
   res.json({ message: "Hello from ServeEase Server!" });
 });
 
