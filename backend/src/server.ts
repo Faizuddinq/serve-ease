@@ -34,7 +34,7 @@ app.get("/", (req: any, res: any) => {
 app.use("/api/auth", authRoute);
 app.use("/api/order", orderRoute);
 app.use("/api/table", tableRoute);
-app.use("/api/payment", );
+app.use("/api/payment", paymentRoute);
 
 // Global Error Handler Middleware
 app.use(globalErrHandler);
