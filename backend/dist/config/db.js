@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const mongoose = require("mongoose");
 const configs = require("./config");
-const connectDB = () => __awaiter(this, void 0, void 0, function* () {
+const connectDatabase = () => __awaiter(this, void 0, void 0, function* () {
     try {
         const conn = yield mongoose.connect(configs.databaseURI);
         console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
@@ -19,5 +19,5 @@ const connectDB = () => __awaiter(this, void 0, void 0, function* () {
         process.exit();
     }
 });
-module.exports = connectDB;
+module.exports = connectDatabase;
 //# sourceMappingURL=db.js.map
