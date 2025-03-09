@@ -7,6 +7,7 @@ const cors = require("cors");
 const authRoute = require("./routes/userRoute")
 const orderRoute = require("./routes/orderRoute")
 const tableRoute = require("./routes/tableRoute")
+const paymentRoute = require("./routes/paymentRoute")
 // Initialize Express App
 const app = express();
 const PORT: number = configuration.port;
@@ -33,7 +34,7 @@ app.get("/", (req: any, res: any) => {
 app.use("/api/auth", authRoute);
 app.use("/api/order", orderRoute);
 app.use("/api/table", tableRoute);
-// app.use("/api/payment", require("./routes/paymentRoute"));
+app.use("/api/payment", );
 
 // Global Error Handler Middleware
 app.use(globalErrHandler);
