@@ -9,7 +9,8 @@ import gulabJamun from '../assets/images/gulab-jamun.webp';
 import pooriSabji from '../assets/images/poori-sabji.webp';
 import roganJosh from '../assets/images/rogan-josh.jpg';
 
-export const popularDishes = [
+import { IDish, ITable } from '../types/constantsType';
+export const popularDishes:IDish[] = [
     {
       id: 1,
       image: butterChicken,
@@ -73,7 +74,7 @@ export const popularDishes = [
   ];
 
 
-export const tables = [
+export const tables:ITable[] = [
     { id: 1, name: "Table 1", status: "Booked", initial: "AM", seats: 4 },
     { id: 2, name: "Table 2", status: "Available", initial: "MB", seats: 6 },
     { id: 3, name: "Table 3", status: "Booked", initial: "JS", seats: 2 },
