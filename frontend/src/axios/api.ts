@@ -6,7 +6,7 @@ const defaultHeader = {
 };
 
 // Construct Base URL from Environment Variable
-const BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api`;
+const BASE_URL = `${import.meta.env.VITE_SERVER_URL}/api`;
 
 export const api = axios.create({
   baseURL: BASE_URL,
