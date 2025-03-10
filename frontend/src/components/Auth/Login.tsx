@@ -41,12 +41,16 @@ const Login: React.FC = () => {
   // Mutation for login API call
   const loginMutation = useMutation<AuthResponse, ApiError, AuthRequest>({
     mutationFn: async (reqData) => {
-      const response = await login(reqData); 
+      const response = await login(reqData);
       return response.data; // ✅ Extracts `data` from `AxiosResponse<AuthResponse>`
     },
-    onSuccess: (user) => {
-      dispatch(setUser(user)); // ✅ `user` is now `AuthResponse`, not `AxiosResponse`
-      navigate("/");
+    onSuccess: (response) => {
+      if (response.data) {
+        dispatch(setUser(response.data)); // ✅ Extracts `data` from `AuthResponse`
+        navigate("/");
+      } else {
+        enqueueSnackbar("Login failed: Invalid response from server.", { variant: "error" });
+      }
     },
     onError: (error) => {
       const errorMessage = error.response?.data?.message || "Login failed!";
