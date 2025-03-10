@@ -20,7 +20,7 @@ interface ApiError {
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  
+
   // State for form data
   const [formData, setFormData] = useState<AuthRequest>({
     email: "",
@@ -40,12 +40,13 @@ const Login: React.FC = () => {
 
   // Mutation for login API call
   const loginMutation = useMutation<AuthResponse, ApiError, AuthRequest>({
-    mutationFn: (reqData) => login(reqData),
-    onSuccess: (res) => {
-      if (res.data) {
-        dispatch(setUser(res.data));
-        navigate("/");
-      }
+    mutationFn: async (reqData) => {
+      const response = await login(reqData); 
+      return response.data; // ✅ Extracts `data` from `AxiosResponse<AuthResponse>`
+    },
+    onSuccess: (user) => {
+      dispatch(setUser(user)); // ✅ `user` is now `AuthResponse`, not `AxiosResponse`
+      navigate("/");
     },
     onError: (error) => {
       const errorMessage = error.response?.data?.message || "Login failed!";
