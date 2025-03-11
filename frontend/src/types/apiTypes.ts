@@ -59,7 +59,7 @@ export interface AuthRequest {
       totalWithTax: number;
     };
     items: OrderItem[]; // Array of Item objects
-    table?: string; // Reference to Table
+    table?: Table; // Reference to Table
     paymentMethod?: string;
     paymentData?: {
       stripe_payment_intent_id?: string;
