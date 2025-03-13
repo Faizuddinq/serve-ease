@@ -8,7 +8,7 @@ import { FaLongArrowAltRight } from "react-icons/fa";
 // ✅ Define Props Type
 interface TableCardProps {
   id: string;
-  name: string;
+  name: number;
   status: string;
   initials: string;
   seats: number;

@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // ✅ Define Table State Type
 interface TableState {
   tableId: string;
-  tableNo: string;
+  tableNo: number;
 }
 
 // ✅ Define Customer State Type
