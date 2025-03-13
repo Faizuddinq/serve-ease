@@ -23,8 +23,8 @@ const useLoadData = (): boolean => {
         console.log("User Data:", data);
 
         if (data.success && data.data) {
-          const { _id, name, email, phone, role } = data.data; // ✅ Extract relevant fields
-          dispatch(setUser({ _id, name, email, phone, role })); // ✅ Store in Redux
+          const { id, name, email, phone, role } = data.data; // ✅ Extract relevant fields
+          dispatch(setUser({ _id:id, name, email, phone, role })); // ✅ Store in Redux
         } else {
           throw new Error("Invalid user data format");
         }

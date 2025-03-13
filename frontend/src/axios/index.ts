@@ -2,10 +2,10 @@ import { api } from "./api";
 import { AuthRequest, AuthResponse, Table, TableResponse, PaymentRequest, PaymentResponse, Order, OrderResponse } from "../types/apiTypes";
 
 // **Auth Endpoints**
-export const login = (data: AuthRequest) => api.post<AuthResponse>("/user/login", data);
-export const register = (data: AuthRequest) => api.post<AuthResponse>("/user/register", data);
-export const getUserData = () => api.get<AuthResponse>("/user");
-export const logout = () => api.post("/user/logout");
+export const login = (data: AuthRequest) => api.post<AuthResponse>("/auth/login", data);
+export const register = (data: AuthRequest) => api.post<AuthResponse>("/auth/register", data);
+export const getUserData = () => api.get<AuthResponse>("/auth");
+export const logout = () => api.post("/auth/logout");
 
 // **Table Endpoints**
 export const addTable = (data: Table) => api.post<TableResponse>("/table", data);
@@ -19,5 +19,4 @@ export const verifyPaymentStripe = (data: { paymentIntentId: string }) => api.po
 // **Order Endpoints**
 export const addOrder = (data: Order) => api.post<OrderResponse>("/order", data);
 export const getOrders = () => api.get<OrderResponse>("/order");
-export const updateOrderStatus = (orderId: string, orderStatus: string) =>
-  api.put<OrderResponse>(`/order/${orderId}`, { orderStatus });
+export const updateOrderStatus = (orderId: string, orderStatus: string) => api.put<OrderResponse>(`/order/${orderId}`, { orderStatus });

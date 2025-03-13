@@ -38,7 +38,7 @@ const Tables: React.FC = () => {
   });
 
   return (
-    <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden">
+    <section className="bg-[#ecc4c4]  overflow-hidden">
       <div className="flex items-center justify-between px-10 py-4">
         <div className="flex items-center gap-4">
           <BackButton />

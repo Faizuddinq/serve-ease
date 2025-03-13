@@ -5,7 +5,7 @@ import { MdRestaurantMenu } from "react-icons/md";
 import MenuContainer from "../components/Menu/MenuContainer";
 import CustomerInfo from "../components/Menu/CustomerInfo";
 import CartInfo from "../components/Menu/CartInfo";
-import Bill from "../components/Menu/Bill";
+// import Bill from "../components/Menu/Bill";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 
@@ -54,7 +54,7 @@ const Menu:React.FC = () => {
         <CartInfo />
         <hr className="border-[#2a2a2a] border-t-2" />
         {/* Bills */}
-        <Bill />
+        {/* <Bill /> */}
       </div>
 
       <BottomNav />
