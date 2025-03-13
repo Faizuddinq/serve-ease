@@ -84,7 +84,7 @@ const RecentOrders: React.FC = () => {
                 </td>
                 <td className="p-4">{formatDateAndTime(order.orderDate)}</td>
                 <td className="p-4">{order.items.length} Items</td>
-                <td className="p-4">Table - {order.table || "N/A"}</td>
+                <td className="p-4">Table - {order.table.tableNo || "N/A"}</td>
                 <td className="p-4">₹{order.bills.totalWithTax}</td>
                 <td className="p-4">{order.paymentMethod || "N/A"}</td>
               </tr>

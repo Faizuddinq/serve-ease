@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // ✅ Define Table State Type
 interface TableState {
   tableId: string;
-  tableNo: number;
+  tableNo: number; // ✅ Ensure `tableNo` is a number
 }
 
 // ✅ Define Customer State Type
@@ -27,7 +27,7 @@ const initialState: CustomerState = {
 // ✅ Define Payload Type for `updateTable` Action
 interface UpdateTablePayload {
   tableId: string;
-  tableNo: string;
+  tableNo: number; // ✅ Fix: Change `tableNo` to number
 }
 
 // ✅ Create Slice with Type-Safe Reducers
@@ -54,7 +54,10 @@ const customerSlice = createSlice({
 
     // ✅ Type-safe `updateTable` Reducer
     updateTable: (state, action: PayloadAction<UpdateTablePayload>) => {
-      state.table = { tableId: action.payload.tableId, tableNo: action.payload.tableNo };
+      state.table = {
+        tableId: action.payload.tableId,
+        tableNo: Number(action.payload.tableNo), // ✅ Ensure `tableNo` is a number
+      };
     },
   },
 });
