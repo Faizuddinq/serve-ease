@@ -1,18 +1,37 @@
 // **User Authentication Interfaces**
-export interface AuthRequest {
-  user?: {
-    _id: string;
+export interface RegisterRequest {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  role: string;
+}
+
+export interface RegisterResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: string;
     name: string;
     email: string;
-    phone: string;
     role: string;
+    password: string; // Ideally, passwords shouldn't be sent in responses, but keeping it as per given response
   };
-  body: {
-    name?: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: string;
+    name: string;
     email: string;
-    phone?: string;
-    password: string;
-    role?: string;
+    role: string;
   };
 }
 
@@ -20,7 +39,7 @@ export interface AuthResponse {
   success: boolean;
   message: string;
   data?: {
-    id: string;
+    _id: string;
     name: string;
     email: string;
     phone: string;

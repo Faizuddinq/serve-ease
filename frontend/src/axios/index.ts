@@ -1,10 +1,17 @@
 import { api } from "./api";
-import { AuthRequest, AuthResponse, Table, TableResponse, PaymentRequest, PaymentResponse, Order, OrderResponse } from "../types/apiTypes";
+import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, AuthResponse, Table, TableResponse, PaymentRequest, PaymentResponse, Order, OrderResponse } from "../types/apiTypes";
+
+
 
 // **Auth Endpoints**
-export const login = (data: AuthRequest) => api.post<AuthResponse>("/auth/login", data);
-export const register = (data: AuthRequest) => api.post<AuthResponse>("/auth/register", data);
+export const login = (data: LoginRequest) => api.post<LoginResponse>("/auth/login", data);
+
+
+  
+export const register = (data: RegisterRequest) => api.post<RegisterResponse>("/auth/register", data);
+
 export const getUserData = () => api.get<AuthResponse>("/auth");
+
 export const logout = () => api.post("/auth/logout");
 
 // **Table Endpoints**

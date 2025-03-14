@@ -1,17 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store"; // ✅ Import RootState
+import { RootState } from "../store"; // Ensure correct store import
 
-// ✅ Define User State Type
+// Define User State Type
 interface UserState {
-  _id: string;
+  _id: string; // Matches API response field
   name: string;
   email: string;
-  phone: string;
+  phone?: string; // Made optional
   role: string;
   isAuth: boolean;
 }
 
-// ✅ Define Initial State
+// Define Initial State
 const initialState: UserState = {
   _id: "",
   name: "",
@@ -21,32 +21,32 @@ const initialState: UserState = {
   isAuth: false,
 };
 
-// ✅ Define Payload Type for `setUser` Action
+// Define Payload Type for `setUser` Action
 interface SetUserPayload {
-  _id: string;
+  _id: string; // Matches API response field
   name: string;
   email: string;
-  phone: string;
+  phone?: string;
   role: string;
 }
 
-// ✅ Create Slice with Type-Safe Reducers
+// Create Slice with Type-Safe Reducers
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // ✅ Type-Safe `setUser` Reducer
+    // Set User Data from API
     setUser: (state, action: PayloadAction<SetUserPayload>) => {
       const { _id, name, phone, email, role } = action.payload;
-      state._id = _id;
+      state._id = _id; // Matches API response
       state.name = name;
-      state.phone = phone;
+      state.phone = phone || ""; // Prevents `undefined` errors
       state.email = email;
       state.role = role;
       state.isAuth = true;
     },
 
-    // ✅ FIX: Directly Mutate State Instead of Returning a New Object
+    // Clear User Data on Logout/Error
     removeUser: (state) => {
       state._id = "";
       state.name = "";
@@ -55,12 +55,17 @@ const userSlice = createSlice({
       state.role = "";
       state.isAuth = false;
     },
+
+    // Partial User Update (Flexible)
+    setSUser: (state, action: PayloadAction<Partial<UserState>>) => {
+      Object.assign(state, action.payload); // Merges new data into state
+    },
   },
 });
 
-// ✅ Selector to get user state from RootState
+// Selector to Get User State
 export const selectUser = (state: RootState) => state.user;
 
-// ✅ Export Actions and Reducer
-export const { setUser, removeUser } = userSlice.actions;
+// Export Actions and Reducer
+export const { setUser, removeUser, setSUser } = userSlice.actions;
 export default userSlice.reducer;
