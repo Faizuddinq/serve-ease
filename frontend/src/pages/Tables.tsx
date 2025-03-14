@@ -69,7 +69,8 @@ const Tables: React.FC = () => {
               id={table._id || ""}
               name={table.tableNo}
               status={table.status || "Available"}
-              initials={table?.currentOrder || "N/A"}
+              // initials={table?.currentOrder || "N/A"}
+              initials={"N/A"}
               seats={table.seats}
             />
           ))

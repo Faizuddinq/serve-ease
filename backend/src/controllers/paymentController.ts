@@ -1,92 +1,134 @@
-import { Request, Response, NextFunction } from "express";
-import Stripe from "stripe";
+const Razorpay = require("razorpay");
 const config = require("../config/config");
+const crypto = require("crypto");
 const Payment = require("../models/paymentModel");
+import { Request, Response, NextFunction } from "express";
+import createHttpError from "http-errors";
 
-const stripe = new Stripe(config.stripeSecretKey, {
-  apiVersion: "2025-02-24.acacia", // Use the latest Stripe API version
+
+// ✅ Define Types for Incoming Requests
+interface CreateOrderRequest extends Request {
+  body: {
+    amount: number;
+  };
+}
+
+interface VerifyPaymentRequest extends Request {
+  body: {
+    razorpay_order_id: string;
+    razorpay_payment_id: string;
+    razorpay_signature: string;
+  };
+}
+
+// ✅ Initialize Razorpay
+const razorpay = new Razorpay({
+  key_id: config.razorpayKeyId,
+  key_secret: config.razorpaySecretKey,
 });
 
-// ✅ Create PaymentIntent (Equivalent to Razorpay Order)
-const createOrder = async (req: Request, res: Response, next: NextFunction) => {
+/**
+ * ✅ Create an Order with Razorpay
+ */
+export const createOrder = async (req: CreateOrderRequest, res: Response, next: NextFunction) => {
   try {
     const { amount } = req.body;
+    console.log("📢 Creating Order with Amount:", amount);
 
     const options = {
-      amount: amount * 100, // Convert amount to the smallest currency unit
+      amount: amount * 100, // Convert to paisa (1 INR = 100 paisa)
       currency: "INR",
-      metadata: { receipt: `receipt_${Date.now()}` },
+      receipt: `receipt_${Date.now()}`,
     };
 
-    const order = await stripe.paymentIntents.create(options);
+    const order = await razorpay.orders.create(options);
+    console.log("✅ Razorpay Order Created:", order);
 
     res.status(200).json({ success: true, order });
   } catch (error) {
-    console.error("Error creating order:", error);
+    console.error("❌ Error Creating Order:", error);
     next(error);
   }
 };
 
-// ✅ Verify Payment (Checking Payment Status)
-const verifyPayment = async (req: Request, res: Response, next: NextFunction) => {
+/**
+ * ✅ Verify Razorpay Payment Signature
+ */
+export const verifyPayment = async (req: VerifyPaymentRequest, res: Response, next: NextFunction) => {
   try {
-    const { paymentId } = req.body; // Get payment ID from the request
+    console.log("🔍 Verifying Payment:", req.body);
 
-    // Retrieve PaymentIntent details from Stripe
-    const paymentIntent = await stripe.paymentIntents.retrieve(paymentId);
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
-    if (paymentIntent.status === "succeeded") {
+    const expectedSignature = crypto
+      .createHmac("sha256", config.razorpaySecretKey)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .digest("hex");
+
+    if (expectedSignature === razorpay_signature) {
+      console.log("✅ Payment Verified Successfully!");
       res.json({ success: true, message: "Payment verified successfully!" });
     } else {
-      res.status(400).json({ success: false, message: "Payment verification failed!" });
+      console.error("❌ Payment Verification Failed!");
+      return next(createHttpError(400, "Payment verification failed!"));
     }
   } catch (error) {
-    console.error("Error verifying payment:", error);
+    console.error("❌ Error Verifying Payment:", error);
     next(error);
   }
 };
 
-// ✅ Handle Webhooks (Secure Payment Verification)
-const webHookVerification = async (req: Request, res: Response, next: NextFunction) => {
-  const sig = req.headers["stripe-signature"] as string;
-  const endpointSecret = config.stripeWebhookSecret;
-
-  let event: Stripe.Event;
-
+/**
+ * ✅ Handle Razorpay Webhook Verification
+ */
+export const webHookVerification = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // 🛑 Verify the webhook signature
-    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-    console.log("✅ Webhook Verified:", event.type);
+    console.log("📢 Webhook Received:", req.body);
 
-    if (event.type === "payment_intent.succeeded") {
-      const paymentIntent = event.data.object as Stripe.PaymentIntent;
-      console.log(`💰 Payment Captured: ${paymentIntent.amount / 100} ${paymentIntent.currency}`);
+    const secret = config.razorpyWebhookSecret;
+    const signature = req.headers["x-razorpay-signature"] as string;
 
-      // ✅ Extract Payment Details
-      const charge = await stripe.charges.retrieve(paymentIntent.latest_charge as string);
-      const paymentMethod = await stripe.paymentMethods.retrieve(paymentIntent.payment_method as string);
-
-      // ✅ Add Payment Details in Database (Matching Razorpay Structure)
-      const newPayment = new Payment({
-        paymentId: paymentIntent.id,
-        orderId: paymentIntent.metadata.receipt, // Since Stripe doesn’t have 'order_id', we use the receipt ID
-        amount: paymentIntent.amount / 100,
-        currency: paymentIntent.currency,
-        status: paymentIntent.status,
-        method: charge.payment_method_details.type, // Extract method (e.g., card, UPI)
-        email: charge.billing_details.email || "",
-        contact: charge.billing_details.phone || "",
-        createdAt: new Date(paymentIntent.created * 1000), // Convert timestamp to Date
-      });
-
-      await newPayment.save();
+    if (!signature) {
+      console.error("❌ Missing Webhook Signature!");
+      return next(createHttpError(400, "Missing Razorpay webhook signature"));
     }
 
-    res.json({ success: true });
+    const body = JSON.stringify(req.body);
+
+    // 🛑 Verify Signature
+    const expectedSignature = crypto.createHmac("sha256", secret).update(body).digest("hex");
+
+    if (expectedSignature === signature) {
+      console.log("✅ Webhook Verified Successfully!");
+
+      if (req.body.event === "payment.captured") {
+        const payment = req.body.payload.payment.entity;
+        console.log(`💰 Payment Captured: ${payment.amount / 100} INR`);
+
+        // ✅ Save Payment to Database
+        const newPayment = new Payment({
+          paymentId: payment.id,
+          orderId: payment.order_id,
+          amount: payment.amount / 100,
+          currency: payment.currency,
+          status: payment.status,
+          method: payment.method,
+          email: payment.email,
+          contact: payment.contact,
+          createdAt: new Date(payment.created_at * 1000),
+        });
+
+        await newPayment.save();
+        console.log("✅ Payment Saved in Database");
+      }
+
+      res.json({ success: true });
+    } else {
+      console.error("❌ Invalid Webhook Signature!");
+      return next(createHttpError(400, "Invalid Razorpay webhook signature"));
+    }
   } catch (error) {
-    console.error("❌ Webhook verification failed:", error);
-    return res.status(400).send(`Webhook Error: ${error.message}`);
+    console.error("❌ Error Processing Webhook:", error);
+    next(error);
   }
 };
-
-module.exports = { createOrder, verifyPayment, webHookVerification };
