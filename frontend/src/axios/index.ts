@@ -13,8 +13,8 @@ export const getTables = () => api.get<TableResponse>("/table");
 export const updateTable = (tableId: string, tableData: Partial<Table>) => api.put<TableResponse>(`/table/${tableId}`, tableData);
 
 // **Payment Endpoints**
-export const createOrderStripe = (data: PaymentRequest) => api.post<PaymentResponse>("/payment/create-order", data);
-export const verifyPaymentStripe = (data: { paymentIntentId: string }) => api.post<PaymentResponse>("/payment/verify-payment", data);
+export const createOrderRazorpay = (data: PaymentRequest) => api.post<PaymentResponse>("/payment/create-order", data);
+export const verifyPaymentRazorpay = (data: { paymentIntentId: string }) => api.post<PaymentResponse>("/payment/verify-payment", data);
 
 // **Order Endpoints**
 export const addOrder = (data: Order) => api.post<OrderResponse>("/order", data);

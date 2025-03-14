@@ -3,16 +3,16 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // ✅ Define Table State Type
 interface TableState {
   tableId: string;
-  tableNo: number; // ✅ Ensure `tableNo` is a number
+  tableNo: number;
 }
 
 // ✅ Define Customer State Type
-interface CustomerState {
+export interface CustomerState {
   orderId: string;
   customerName: string;
   customerPhone: string;
   guests: number;
-  table: TableState | null; // ✅ Fix: Store table object instead of string
+  table: TableState | null;
 }
 
 // ✅ Define Initial State
@@ -21,13 +21,13 @@ const initialState: CustomerState = {
   customerName: "",
   customerPhone: "",
   guests: 0,
-  table: null, // ✅ Initially null
+  table: null,
 };
 
 // ✅ Define Payload Type for `updateTable` Action
 interface UpdateTablePayload {
   tableId: string;
-  tableNo: number; // ✅ Fix: Change `tableNo` to number
+  tableNo: number;
 }
 
 // ✅ Create Slice with Type-Safe Reducers
@@ -36,16 +36,17 @@ const customerSlice = createSlice({
   initialState,
   reducers: {
     // ✅ Type-safe `setCustomer` Reducer
-    setCustomer: (state, action: PayloadAction<Omit<CustomerState, "table">>) => {
-      const { customerName, customerPhone, guests } = action.payload;
-      state.orderId = `${Date.now()}`;
-      state.customerName = customerName;
-      state.customerPhone = customerPhone;
-      state.guests = guests;
+    setCustomer: (state, action: PayloadAction<CustomerState>) => {
+      state.orderId = action.payload.orderId;
+      state.customerName = action.payload.customerName;
+      state.customerPhone = action.payload.customerPhone;
+      state.guests = action.payload.guests;
+      state.table = action.payload.table; // ✅ Ensure table is set correctly
     },
 
     // ✅ Type-safe `removeCustomer` Reducer
     removeCustomer: (state) => {
+      state.orderId = "";
       state.customerName = "";
       state.customerPhone = "";
       state.guests = 0;
@@ -54,10 +55,15 @@ const customerSlice = createSlice({
 
     // ✅ Type-safe `updateTable` Reducer
     updateTable: (state, action: PayloadAction<UpdateTablePayload>) => {
-      state.table = {
-        tableId: action.payload.tableId,
-        tableNo: Number(action.payload.tableNo), // ✅ Ensure `tableNo` is a number
-      };
+      if (state.table) {
+        state.table.tableId = action.payload.tableId;
+        state.table.tableNo = action.payload.tableNo;
+      } else {
+        state.table = {
+          tableId: action.payload.tableId,
+          tableNo: action.payload.tableNo,
+        };
+      }
     },
   },
 });

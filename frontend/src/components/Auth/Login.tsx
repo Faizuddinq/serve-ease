@@ -23,7 +23,7 @@ const Login: React.FC = () => {
 
   // State for form data
   const [formData, setFormData] = useState<AuthRequest>({
-    email: "",
+    user: "",
     password: "",
   });
 
