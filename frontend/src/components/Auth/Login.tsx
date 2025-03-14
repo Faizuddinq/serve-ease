@@ -1,58 +1,63 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { login } from "../../axios/index";
+import { login } from "../../axios";
 import { enqueueSnackbar } from "notistack";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/slices/userSlice";
 import { useNavigate } from "react-router-dom";
-import { AppDispatch } from "../../redux/store";
-import { AuthRequest, AuthResponse } from "../../types/apiTypes"; // ✅ Import from apiTypes.ts
+import { AxiosError } from "axios";
 
-// Define API error type
-interface ApiError {
-  response?: {
-    data?: {
-      message?: string;
-    };
+// Define types for form data
+interface LoginForm {
+  email: string;
+  password: string;
+}
+
+// Define API response type
+interface LoginResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
   };
 }
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
-
-  // State for form data
-  const [formData, setFormData] = useState<AuthRequest>({
+  const dispatch = useDispatch();
+  
+  const [formData, setFormData] = useState<LoginForm>({
     email: "",
     password: "",
   });
 
-  // Handle input changes
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     loginMutation.mutate(formData);
   };
 
-  // Mutation for login API call
-  const loginMutation = useMutation<AuthResponse, ApiError, AuthRequest>({
-    mutationFn: async (reqData) => {
-      const response = await login(reqData);
-      return response.data; // ✅ Extracts `data` from `AxiosResponse<AuthResponse>`
+  // Mutation for login request
+  const loginMutation = useMutation({
+    mutationFn: (reqData: LoginForm) => login(reqData),
+    onSuccess: (res: { data: LoginResponse }) => {
+      // ✅ FIX: Correctly destructure the response
+      const { id, name, email, role } = res.data.data;
+
+      // ✅ Dispatch user data correctly
+      dispatch(setUser({ _id:id, name, email, role }));
+
+      // ✅ Navigate after successful login
+      navigate("/");
+      enqueueSnackbar(res.data.message, { variant: "success" });
     },
-    onSuccess: (response) => {
-      if (response.data) {
-        dispatch(setUser(response.data)); // ✅ Extracts `data` from `AuthResponse`
-        navigate("/");
-      } else {
-        enqueueSnackbar("Login failed: Invalid response from server.", { variant: "error" });
-      }
-    },
-    onError: (error) => {
+    onError: (error: AxiosError<{ message: string }>) => {
       const errorMessage = error.response?.data?.message || "Login failed!";
       enqueueSnackbar(errorMessage, { variant: "error" });
     },
@@ -85,7 +90,7 @@ const Login: React.FC = () => {
             <input
               type="password"
               name="password"
-              value={formData.password || ""}
+              value={formData.password}
               onChange={handleChange}
               placeholder="Enter password"
               className="bg-transparent flex-1 text-white focus:outline-none"

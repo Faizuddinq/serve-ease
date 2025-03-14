@@ -3,7 +3,7 @@ import { RootState } from "../store"; // Import RootState for the selector
 
 // ✅ Define Cart Item Type
 interface CartItem {
-  id: string;
+  _id: string;
   name: string;
   price: number;
   quantity: number;
@@ -27,7 +27,7 @@ const cartSlice = createSlice({
 
     // ✅ Type-Safe `removeItem` Reducer
     removeItem: (state, action: PayloadAction<string>) => {
-      return state.filter((item) => item.id !== action.payload);
+      return state.filter((item) => item._id !== action.payload);
     },
 
     // ✅ FIX: Directly Mutate State Instead of Returning a New Object
