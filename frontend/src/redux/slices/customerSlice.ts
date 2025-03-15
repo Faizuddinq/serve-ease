@@ -1,11 +1,43 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// ✅ Define Table Type (Updated)
-interface Table {
-  id: string;  // ✅ Matches API `_id`
+// ✅ Define Order Interface (Matches Order Model)
+interface IOrder {
+  _id: string;
+  customerDetails: {
+    name: string;
+    phone: string;
+    guests: number;
+  };
+  orderStatus: string;
+  orderDate: string;
+  bills: {
+    total: number;
+    tax: number;
+    totalWithTax: number;
+  };
+  items: IItem[];
+  table: string; // Reference to table's `_id`
+  paymentMethod?: string;
+  paymentData?: {
+    razorpay_order_id?: string;
+    razorpay_payment_id?: string;
+  };
+}
+
+// ✅ Define Item Interface (Used in Orders)
+interface IItem {
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+// ✅ Define Table Interface (Aligned with MongoDB)
+export interface Table {
+  id: string; // ✅ Matches MongoDB `_id`
   tableNo: number;
   seats: number;
-  status: string;
+  status: string; // ✅ Enforced valid statuses
+  currentOrder?: IOrder | null; // ✅ Reference to the current order, if any
 }
 
 // ✅ Define Customer State Type
@@ -14,7 +46,7 @@ interface CustomerState {
   customerName: string;
   customerPhone: string;
   guests: number;
-  table: Table | null;
+  table: Table | null; // ✅ Uses the updated Table interface
 }
 
 // ✅ Initial State
@@ -30,7 +62,7 @@ const customerSlice = createSlice({
   name: "customer",
   initialState,
   reducers: {
-    // ✅ Set Customer Data (Allow Partial Updates)
+    // ✅ Set Customer Data (Partial Update Supported)
     setCustomer: (state, action: PayloadAction<Partial<CustomerState>>) => {
       state.orderId = action.payload.orderId || `${Date.now()}`;
       state.customerName = action.payload.customerName || "";
@@ -38,7 +70,7 @@ const customerSlice = createSlice({
       state.guests = action.payload.guests || 0;
     },
 
-    // ✅ Update Table (Fixed)
+    // ✅ Update Table (Uses new Table interface)
     updateTable: (state, action: PayloadAction<Table>) => {
       state.table = action.payload;
     },
