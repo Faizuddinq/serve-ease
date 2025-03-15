@@ -5,27 +5,9 @@ import { useMutation } from "@tanstack/react-query";
 import { addTable } from "../../axios";
 import { enqueueSnackbar } from "notistack";
 import { AxiosError } from "axios";
+import { TableRequest, TableResponse } from "../../types/apiTypes"; // ✅ Import interfaces
 
-// ✅ Define Request Type (Sent to API)
-interface TableRequest {
-  tableNo: number;
-  seats: number;
-}
-
-// ✅ Define Response Type (Received from API)
-interface Table {
-  _id: string;
-  tableNo: number;
-  status: string;
-  seats: number;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
-
-
-
-// ✅ Props Type for Modal
+// ✅ Define Props Type
 interface ModalProps {
   setIsTableModalOpen: (isOpen: boolean) => void;
 }
@@ -41,39 +23,36 @@ const Modal: React.FC<ModalProps> = ({ setIsTableModalOpen }) => {
     const { name, value } = e.target;
     setTableData((prev) => ({
       ...prev,
-      [name]: Number(value) > 0 ? Number(value) : 0, // Prevents negative values
+      [name]: Math.max(1, Number(value)), // Prevents negative & zero values
     }));
   };
 
   // ✅ Handle Form Submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (tableData.tableNo <= 0 || tableData.seats <= 0) {
-      enqueueSnackbar("Table number and seats must be greater than zero", {
-        variant: "warning",
-      });
-      return;
-    }
+    console.log(tableData);
     tableMutation.mutate(tableData);
   };
 
   // ✅ Handle Modal Close
-  const handleCloseModal = () => setIsTableModalOpen(false);
+  const handleCloseModal = () => {
+    setIsTableModalOpen(false);
+  };
 
-  // ✅ Mutation Hook for Adding Table (Fix: Defined correct types)
-  const tableMutation = useMutation<Table, AxiosError<{ message: string }>, TableRequest>({
-    mutationFn: async (reqData: TableRequest) => {
-      const response = await addTable(reqData);
-      return response.data.data; // ✅ Extract only `data` from API response
+  // ✅ Mutation Hook for Adding Table
+  const tableMutation = useMutation<TableResponse, AxiosError<{ message: string }>, TableRequest>({
+    mutationFn: async (newTable: TableRequest) => {
+      const response = await addTable(newTable); // ✅ API Call Here
+      return response.data; // ✅ Extract the data property
     },
-    onSuccess: () => {
+    onSuccess: (res) => {
       setIsTableModalOpen(false);
-      enqueueSnackbar("Table added successfully!", { variant: "success" });
+      enqueueSnackbar(res.message, { variant: "success" });
     },
     onError: (error) => {
-      const message = error.response?.data?.message || "Failed to add table!";
+      const message = error.response?.data?.message || "Something went wrong!";
       enqueueSnackbar(message, { variant: "error" });
-      console.error("Error adding table:", error);
+      console.error(error);
     },
   });
 
@@ -138,7 +117,7 @@ const Modal: React.FC<ModalProps> = ({ setIsTableModalOpen }) => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full rounded-lg mt-10 mb-6 py-3 text-lg bg-yellow-400 text-gray-900 font-bold disabled:opacity-50"
+            className="w-full rounded-lg mt-10 mb-6 py-3 text-lg bg-yellow-400 text-gray-900 font-bold"
             disabled={tableMutation.isPending}
           >
             {tableMutation.isPending ? "Adding..." : "Add Table"}

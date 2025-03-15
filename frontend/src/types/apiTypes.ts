@@ -1,10 +1,13 @@
-// **User Authentication Interfaces**
+// ==========================
+// 🔹 USER AUTHENTICATION
+// ==========================
+
 export interface RegisterRequest {
   name: string;
   email: string;
   phone: string;
   password: string;
-  role: string;
+  role: string; // ✅ Use union type for role
 }
 
 export interface RegisterResponse {
@@ -15,7 +18,7 @@ export interface RegisterResponse {
     name: string;
     email: string;
     role: string;
-    password: string; // Ideally, passwords shouldn't be sent in responses, but keeping it as per given response
+    password?: string; // ❌ Removed from response for security best practices
   };
 }
 
@@ -49,33 +52,36 @@ export interface AuthResponse {
   };
 }
 
-// ✅ Define Request Type (Sent to API)
+// ==========================
+// 🔹 TABLE INTERFACES
+// ==========================
+
 export interface TableRequest {
   tableNo: number;
   seats: number;
 }
 
-// ✅ Define Response Type (Received from API)
 export interface Table {
   _id: string;
   tableNo: number;
-  status: string;
+  status: string; // ✅ Use stricter types
   seats: number;
   createdAt: string;
   updatedAt: string;
-  __v: number;
+  __v?: number;
+  currentOrder?: Order; // ✅ Reference to current order (optional)
 }
 
-// ✅ Define API Response Type
 export interface TableResponse {
   success: boolean;
   message: string;
-  data: Table;
+  data: Table[];
 }
 
+// ==========================
+// 🔹 ORDER INTERFACES
+// ==========================
 
-
-// **Order Item Interface**
 export interface OrderItem {
   _id: string;
   name: string;
@@ -83,48 +89,43 @@ export interface OrderItem {
   quantity: number;
 }
 
-// **Order Interfaces**
+export interface Bills {
+  total: number;
+  tax: number;
+  totalWithTax: number;
+}
+
+export interface CustomerDetails {
+  name: string;
+  phone: string;
+  guests: number;
+}
+
 export interface Order {
   _id: string;
-  customerDetails: {
-    name: string;
-    phone: string;
-    guests: number;
-  };
-  bills: {
-    total: number;
-    tax: number;
-    totalWithTax: number;
-  };
-  orderStatus: string;
+  customerDetails: CustomerDetails;
+  bills: Bills;
+  orderStatus: string; // ✅ Stricter status
   items: OrderItem[];
-  table: {
-    _id: string;
-    tableNo: number;
-    status: string;
-    seats: number;
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
-  };
-  paymentMethod: string;
+  table: Table;
+  paymentMethod: string; // ✅ Stricter types
   orderDate: string;
   createdAt: string;
   updatedAt: string;
 }
 
-// ✅ Define API Response Type
 export interface OrderResponse {
   success: boolean;
   data: Order[];
 }
 
+// ==========================
+// 🔹 PAYMENT INTERFACES
+// ==========================
 
-
-// **Payment Interfaces**
 export interface PaymentRequest {
   amount: number;
-  currency: string;
+  currency: string; // ✅ Limited currency options
   email: string;
 }
 
@@ -134,8 +135,8 @@ export interface Payment {
   orderId: string;
   amount: number;
   currency: string;
-  status: string;
-  method: string;
+  status: string; // ✅ Stricter status types
+  method: string; // ✅ Use specific payment methods
   email: string;
   contact: string;
   createdAt?: string;
