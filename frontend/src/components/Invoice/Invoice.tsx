@@ -1,18 +1,59 @@
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
 import { FaCheck } from "react-icons/fa6";
-import { Order } from "../../types/apiTypes"; // ✅ Import Order type
 
-// ✅ Define Props Interface
-interface InvoiceProps {
-  orderInfo: Order;
+interface Item {
+  name: string;
+  price: number;
+  quantity: number;
+  _id: string;
+}
+
+interface Bills {
+  total: number;
+  tax: number;
+  totalWithTax: number;
+}
+
+interface Table {
+  _id: string;
+  tableNo: number;
+  status: string;
+  seats: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface PaymentData {
+  razorpay_order_id?: string;
+  razorpay_payment_id?: string;
+}
+
+interface CustomerDetails {
+  name: string;
+  phone: string;
+  guests: number;
+}
+
+interface OrderInfo {
+  _id: string;
+  orderDate: string;
+  customerDetails: CustomerDetails;
+  items: Item[];
+  bills: Bills;
+  paymentMethod: string;
+  paymentData?: PaymentData;
+  table: Table;
+}
+
+interface Props {
+  orderInfo: OrderInfo;
   setShowInvoice: (value: boolean) => void;
 }
 
-const Invoice: React.FC<InvoiceProps> = ({ orderInfo, setShowInvoice }) => {
+const Invoice: React.FC<Props> = ({ orderInfo, setShowInvoice }) => {
   const invoiceRef = useRef<HTMLDivElement>(null);
 
-  // ✅ Handle Printing Invoice
   const handlePrint = () => {
     if (!invoiceRef.current) return;
 
@@ -35,9 +76,9 @@ const Invoice: React.FC<InvoiceProps> = ({ orderInfo, setShowInvoice }) => {
           </body>
         </html>
       `);
-
       WinPrint.document.close();
       WinPrint.focus();
+
       setTimeout(() => {
         WinPrint.print();
         WinPrint.close();
@@ -48,9 +89,9 @@ const Invoice: React.FC<InvoiceProps> = ({ orderInfo, setShowInvoice }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-4 rounded-lg shadow-lg w-[400px]">
-        {/* ✅ Invoice Content for Printing */}
+        {/* Receipt Content for Printing */}
         <div ref={invoiceRef} className="p-4">
-          {/* ✅ Receipt Header */}
+          {/* Receipt Header */}
           <div className="flex justify-center mb-4">
             <motion.div
               initial={{ scale: 0, opacity: 0 }}
@@ -72,10 +113,11 @@ const Invoice: React.FC<InvoiceProps> = ({ orderInfo, setShowInvoice }) => {
           <h2 className="text-xl font-bold text-center mb-2">Order Receipt</h2>
           <p className="text-gray-600 text-center">Thank you for your order!</p>
 
-          {/* ✅ Order Details */}
+          {/* Order Details */}
           <div className="mt-4 border-t pt-4 text-sm text-gray-700">
             <p>
-              <strong>Order ID:</strong> #{Math.floor(new Date(orderInfo.orderDate).getTime())}
+              <strong>Order ID:</strong>{" "}
+              {Math.floor(new Date(orderInfo.orderDate).getTime())}
             </p>
             <p>
               <strong>Name:</strong> {orderInfo.customerDetails.name}
@@ -88,12 +130,15 @@ const Invoice: React.FC<InvoiceProps> = ({ orderInfo, setShowInvoice }) => {
             </p>
           </div>
 
-          {/* ✅ Items Summary */}
+          {/* Items Summary */}
           <div className="mt-4 border-t pt-4">
             <h3 className="text-sm font-semibold">Items Ordered</h3>
             <ul className="text-sm text-gray-700">
               {orderInfo.items.map((item, index) => (
-                <li key={index} className="flex justify-between items-center text-xs">
+                <li
+                  key={index}
+                  className="flex justify-between items-center text-xs"
+                >
                   <span>
                     {item.name} x{item.quantity}
                   </span>
@@ -103,7 +148,7 @@ const Invoice: React.FC<InvoiceProps> = ({ orderInfo, setShowInvoice }) => {
             </ul>
           </div>
 
-          {/* ✅ Bills Summary */}
+          {/* Bills Summary */}
           <div className="mt-4 border-t pt-4 text-sm">
             <p>
               <strong>Subtotal:</strong> ₹{orderInfo.bills.total.toFixed(2)}
@@ -112,11 +157,12 @@ const Invoice: React.FC<InvoiceProps> = ({ orderInfo, setShowInvoice }) => {
               <strong>Tax:</strong> ₹{orderInfo.bills.tax.toFixed(2)}
             </p>
             <p className="text-md font-semibold">
-              <strong>Grand Total:</strong> ₹{orderInfo.bills.totalWithTax.toFixed(2)}
+              <strong>Grand Total:</strong> ₹
+              {orderInfo.bills.totalWithTax.toFixed(2)}
             </p>
           </div>
 
-          {/* ✅ Payment Details */}
+          {/* Payment Details */}
           <div className="mb-2 mt-2 text-xs">
             {orderInfo.paymentMethod === "Cash" ? (
               <p>
@@ -127,20 +173,24 @@ const Invoice: React.FC<InvoiceProps> = ({ orderInfo, setShowInvoice }) => {
                 <p>
                   <strong>Payment Method:</strong> {orderInfo.paymentMethod}
                 </p>
-                <p>
-                  <strong>Stripe Payment Intent ID:</strong>{" "}
-                  {orderInfo.paymentData?.stripe_payment_intent_id || "N/A"}
-                </p>
-                <p>
-                  <strong>Stripe Charge ID:</strong>{" "}
-                  {orderInfo.paymentData?.stripe_charge_id || "N/A"}
-                </p>
+                {orderInfo.paymentData?.razorpay_order_id && (
+                  <p>
+                    <strong>Razorpay Order ID:</strong>{" "}
+                    {orderInfo.paymentData?.razorpay_order_id}
+                  </p>
+                )}
+                {orderInfo.paymentData?.razorpay_payment_id && (
+                  <p>
+                    <strong>Razorpay Payment ID:</strong>{" "}
+                    {orderInfo.paymentData?.razorpay_payment_id}
+                  </p>
+                )}
               </>
             )}
           </div>
         </div>
 
-        {/* ✅ Action Buttons */}
+        {/* Buttons */}
         <div className="flex justify-between mt-4">
           <button
             onClick={handlePrint}

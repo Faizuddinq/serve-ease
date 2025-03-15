@@ -49,22 +49,31 @@ export interface AuthResponse {
   };
 }
 
-// **Table Interfaces**
+// ✅ Define Request Type (Sent to API)
+export interface TableRequest {
+  tableNo: number;
+  seats: number;
+}
+
+// ✅ Define Response Type (Received from API)
 export interface Table {
   _id: string;
   tableNo: number;
-  status: string; // "Available" or "Booked"
+  status: string;
   seats: number;
   createdAt: string;
   updatedAt: string;
   __v: number;
 }
 
+// ✅ Define API Response Type
 export interface TableResponse {
   success: boolean;
-  message?: string;
-  data: Table[];
+  message: string;
+  data: Table;
 }
+
+
 
 // **Order Item Interface**
 export interface OrderItem {
@@ -82,26 +91,35 @@ export interface Order {
     phone: string;
     guests: number;
   };
-  orderStatus: string; // "Pending", "Completed", "Cancelled", etc.
-  orderDate: string; // Date ISO String
   bills: {
     total: number;
     tax: number;
     totalWithTax: number;
   };
-  items: OrderItem[]; // Array of Order Items
-  table: Table; // Embedded Table Object
-  paymentMethod: string; // Payment method e.g., "Cash", "Card"
+  orderStatus: string;
+  items: OrderItem[];
+  table: {
+    _id: string;
+    tableNo: number;
+    status: string;
+    seats: number;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  };
+  paymentMethod: string;
+  orderDate: string;
   createdAt: string;
   updatedAt: string;
-  __v: number;
 }
 
+// ✅ Define API Response Type
 export interface OrderResponse {
   success: boolean;
-  message?: string;
   data: Order[];
 }
+
+
 
 // **Payment Interfaces**
 export interface PaymentRequest {
