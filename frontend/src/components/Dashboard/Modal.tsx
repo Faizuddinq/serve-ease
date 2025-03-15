@@ -1,84 +1,81 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { addTable } from "../../axios";
 import { enqueueSnackbar } from "notistack";
 import { AxiosError } from "axios";
 
-// ✅ Define Props for Modal
+// ✅ Define Request Type (Sent to API)
+interface TableRequest {
+  tableNo: number;
+  seats: number;
+}
+
+// ✅ Define Response Type (Received from API)
+interface Table {
+  _id: string;
+  tableNo: number;
+  status: string;
+  seats: number;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+
+
+// ✅ Props Type for Modal
 interface ModalProps {
   setIsTableModalOpen: (isOpen: boolean) => void;
 }
 
-// ✅ Define `TableData` Using New `Table` Type
-type TableData = {
-  tableNo: number;
-  seats: number;
-};
 const Modal: React.FC<ModalProps> = ({ setIsTableModalOpen }) => {
-  const queryClient = useQueryClient();
-
-  // ✅ State for Table Form
-  const [tableData, setTableData] = useState<TableData>({
-    tableNo: 1,
-    seats: 1
+  const [tableData, setTableData] = useState<TableRequest>({
+    tableNo: 0,
+    seats: 0,
   });
 
-  console.log("🚀 Table Modal Opened:", tableData);
-
-  // ✅ Handle input changes
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  // ✅ Handle Input Change
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const newValue = Number(value);
-
-    console.log(`✏️ Updating ${name}:`, newValue);
-
     setTableData((prev) => ({
       ...prev,
-      [name]: newValue,
+      [name]: Number(value) > 0 ? Number(value) : 0, // Prevents negative values
     }));
   };
 
-  // ✅ Handle form submission
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  // ✅ Handle Form Submission
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log("📤 Submitting Table Data:", tableData);
-
     if (tableData.tableNo <= 0 || tableData.seats <= 0) {
-      console.warn("❌ Invalid Table Data! Table No and Seats must be greater than 0.");
-      enqueueSnackbar("Table number & seats must be greater than 0", { variant: "warning" });
+      enqueueSnackbar("Table number and seats must be greater than zero", {
+        variant: "warning",
+      });
       return;
     }
-
     tableMutation.mutate(tableData);
   };
 
-  // ✅ Mutation for Adding Table
-  const tableMutation = useMutation({
-    mutationFn: async (reqData: TableData) => {
-      console.log("🔄 Sending API Request to Add Table:", reqData);
-      const response = await addTable(reqData); // Ensure this matches expected format
-      console.log("✅ API Response Received:", response.data);
-      return response.data;
+  // ✅ Handle Modal Close
+  const handleCloseModal = () => setIsTableModalOpen(false);
+
+  // ✅ Mutation Hook for Adding Table (Fix: Defined correct types)
+  const tableMutation = useMutation<Table, AxiosError<{ message: string }>, TableRequest>({
+    mutationFn: async (reqData: TableRequest) => {
+      const response = await addTable(reqData);
+      return response.data.data; // ✅ Extract only `data` from API response
     },
-    onSuccess: (data) => {
-      console.log("🎉 Table Added Successfully!", data);
-      enqueueSnackbar(data.message || "Table added successfully!", { variant: "success" });
-  
-      // ✅ Refresh `tables` Query
-      queryClient.invalidateQueries({ queryKey: ["tables"] });
-  
+    onSuccess: () => {
       setIsTableModalOpen(false);
+      enqueueSnackbar("Table added successfully!", { variant: "success" });
     },
-    onError: (error: AxiosError<{ message: string }>) => {
-      console.error("❌ API Error:", error);
+    onError: (error) => {
       const message = error.response?.data?.message || "Failed to add table!";
       enqueueSnackbar(message, { variant: "error" });
+      console.error("Error adding table:", error);
     },
   });
-  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -93,10 +90,7 @@ const Modal: React.FC<ModalProps> = ({ setIsTableModalOpen }) => {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-[#f5f5f5] text-xl font-semibold">Add Table</h2>
           <button
-            onClick={() => {
-              console.log("❌ Closing Modal...");
-              setIsTableModalOpen(false);
-            }}
+            onClick={handleCloseModal}
             className="text-[#f5f5f5] hover:text-red-500"
           >
             <IoMdClose size={24} />
@@ -104,42 +98,50 @@ const Modal: React.FC<ModalProps> = ({ setIsTableModalOpen }) => {
         </div>
 
         {/* Modal Body */}
-        <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+        <form onSubmit={handleSubmit} className="space-y-4 mt-10">
+          {/* Table Number Input */}
           <div>
-            <label className="block text-[#ababab] mb-2 text-sm font-medium">Table Number</label>
+            <label className="block text-[#ababab] mb-2 mt-3 text-sm font-medium">
+              Table Number
+            </label>
             <div className="flex items-center rounded-lg p-5 px-4 bg-[#1f1f1f]">
               <input
                 type="number"
                 name="tableNo"
-                value={tableData.tableNo}
+                value={tableData.tableNo || ""}
                 onChange={handleInputChange}
                 className="bg-transparent flex-1 text-white focus:outline-none"
+                min="1"
                 required
-                min={1}
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-[#ababab] mb-2 text-sm font-medium">Number of Seats</label>
-            <div className="flex items-center rounded-lg p-5 px-4 bg-[#1f1f1f]">
-              <input
-                type="number"
-                name="seats"
-                value={tableData.seats}
-                onChange={handleInputChange}
-                className="bg-transparent flex-1 text-white focus:outline-none"
-                required
-                min={1}
               />
             </div>
           </div>
 
+          {/* Number of Seats Input */}
+          <div>
+            <label className="block text-[#ababab] mb-2 mt-3 text-sm font-medium">
+              Number of Seats
+            </label>
+            <div className="flex items-center rounded-lg p-5 px-4 bg-[#1f1f1f]">
+              <input
+                type="number"
+                name="seats"
+                value={tableData.seats || ""}
+                onChange={handleInputChange}
+                className="bg-transparent flex-1 text-white focus:outline-none"
+                min="1"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
-           
-            className="w-full rounded-lg mt-6 py-3 text-lg bg-yellow-400 text-gray-900 font-bold disabled:bg-gray-600"
+            className="w-full rounded-lg mt-10 mb-6 py-3 text-lg bg-yellow-400 text-gray-900 font-bold disabled:opacity-50"
+            disabled={tableMutation.isPending}
           >
-            Add Table
+            {tableMutation.isPending ? "Adding..." : "Add Table"}
           </button>
         </form>
       </motion.div>

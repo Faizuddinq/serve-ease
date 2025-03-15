@@ -38,7 +38,7 @@ const BottomNav: React.FC = () => {
       return;
     }
     
-    dispatch(setCustomer({ name, phone, guests: guestCount }));
+    dispatch(setCustomer({ customerName:name, customerPhone:phone, guests: guestCount }));
     navigate("/tables");
     closeModal();
   };
