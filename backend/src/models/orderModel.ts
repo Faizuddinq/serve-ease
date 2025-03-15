@@ -1,14 +1,14 @@
-import { Schema, model, Document, Types } from "mongoose";
+import mongoose, { Document, Model, Schema } from "mongoose";
 
-// Define Item Structure
+// ✅ Define Item Interface
 interface IItem {
   name: string;
   price: number;
   quantity: number;
 }
 
-// Define Order Interface
-export interface IOrder extends Document {
+// ✅ Define Order Interface
+interface IOrder extends Document {
   customerDetails: {
     name: string;
     phone: string;
@@ -21,18 +21,18 @@ export interface IOrder extends Document {
     tax: number;
     totalWithTax: number;
   };
-  items: IItem[]; // Array of Item objects
-  table?: Types.ObjectId; // Reference to Table
+  items: IItem[]; // ✅ Now properly typed!
+  table: mongoose.Types.ObjectId; // Refers to the Table model
   paymentMethod?: string;
   paymentData?: {
-    stripe_payment_intent_id?: string;
-    stripe_charge_id?: string;
+    razorpay_order_id?: string;
+    razorpay_payment_id?: string;
   };
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-// Define Order Schema
+// ✅ Define Mongoose Schema
 const orderSchema = new Schema<IOrder>(
   {
     customerDetails: {
@@ -54,15 +54,16 @@ const orderSchema = new Schema<IOrder>(
         quantity: { type: Number, required: true },
       },
     ],
-    table: { type: Schema.Types.ObjectId, ref: "Table" },
+    table: { type: Schema.Types.ObjectId, ref: "Table", required: true },
     paymentMethod: { type: String },
     paymentData: {
-      stripe_payment_intent_id: { type: String }, // Stores PaymentIntent ID
-      stripe_charge_id: { type: String }, // Stores Charge ID
+      razorpay_order_id: { type: String },
+      razorpay_payment_id: { type: String },
     },
   },
   { timestamps: true }
 );
 
-// Export Order Model
-export default model<IOrder>("Order", orderSchema);
+// ✅ Export Order Model
+const Order: Model<IOrder> = mongoose.model<IOrder>("Order", orderSchema);
+export default Order;
