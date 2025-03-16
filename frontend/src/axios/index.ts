@@ -1,5 +1,8 @@
 import { api } from "./api";
-import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, AuthResponse, Table, TableResponse, PaymentRequest, PaymentResponse, Order, OrderResponse, TableRequest } from "../types/apiTypes";
+import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, AuthResponse, Table, TableResponse,        CreateOrderRequest,
+    CreateOrderResponse,
+    VerifyPaymentRequest,
+    VerifyPaymentResponse, Order, OrderResponse, TableRequest } from "../types/apiTypes";
 
 
 
@@ -20,8 +23,8 @@ export const getTables = () => api.get<TableResponse>("/table");
 export const updateTable = (tableId: string, tableData: Partial<Table>) => api.put<TableResponse>(`/table/${tableId}`, tableData);
 
 // **Payment Endpoints**
-export const createOrderRazorpay = (data: PaymentRequest) => api.post<PaymentResponse>("/payment/create-order", data);
-export const verifyPaymentRazorpay = (data: { paymentIntentId: string }) => api.post<PaymentResponse>("/payment/verify-payment", data);
+export const createOrderRazorpay = (data: CreateOrderRequest) => api.post<CreateOrderResponse>("/payment/create-order", data);
+export const verifyPaymentRazorpay = (data:  VerifyPaymentRequest) => api.post<VerifyPaymentResponse>("/payment/verify-payment", data);
 
 // **Order Endpoints**
 export const addOrder = (data: Order) => api.post<OrderResponse>("/order", data); 

@@ -1,5 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+// ✅ Define Item Interface (Used in Orders)
+interface IItem {
+  name: string;
+  price: number;
+  quantity: number;
+}
+
 // ✅ Define Order Interface (Matches Order Model)
 interface IOrder {
   _id: string;
@@ -24,12 +31,7 @@ interface IOrder {
   };
 }
 
-// ✅ Define Item Interface (Used in Orders)
-interface IItem {
-  name: string;
-  price: number;
-  quantity: number;
-}
+
 
 // ✅ Define Table Interface (Aligned with MongoDB)
 export interface Table {
@@ -41,7 +43,7 @@ export interface Table {
 }
 
 // ✅ Define Customer State Type
-interface CustomerState {
+export interface CustomerState {
   orderId: string;
   customerName: string;
   customerPhone: string;
