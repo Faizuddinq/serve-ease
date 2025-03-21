@@ -12,10 +12,10 @@ connectDB();
 // Allowed origins
 const allowedOrigins= [
     "http://localhost:5173",
-    "https://serve-ease-pos-frontend.vercel.app",
-    "https://www.serve-ease-pos-frontend.vercel.app",
-    "http://serve-ease-pos-frontend.vercel.app",
-    "http://www.serve-ease-pos-frontend.vercel.app",
+    "https://pos-repo-frontend.vercel.app",
+    "https://www.pos-repo-frontend.vercel.app",
+    "http://pos-repo-frontend.vercel.app",
+    "http://www.pos-repo-frontend.vercel.app",
   ];
   
 
