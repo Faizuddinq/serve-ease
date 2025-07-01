@@ -36,7 +36,9 @@ const RecentOrders = () => {
     enqueueSnackbar("Something went wrong!", { variant: "error" });
   }
 
-  console.log(resData.data.data);
+  console.log(resData?.data?.data);
+
+  const orders = resData?.data?.data || [];
 
   return (
     <div className="container mx-auto bg-[#262626] p-4 rounded-lg">
@@ -58,16 +60,16 @@ const RecentOrders = () => {
             </tr>
           </thead>
           <tbody>
-            {resData?.data.data.map((order, index) => (
+            {orders.map((order, index) => (
               <tr
-                key={index}
+                key={order._id || index}
                 className="border-b border-gray-600 hover:bg-[#333]"
               >
                 <td className="p-4">#{Math.floor(new Date(order.orderDate).getTime())}</td>
                 <td className="p-4">{order.customerDetails.name}</td>
                 <td className="p-4">
                   <select
-                    className={`bg-[#1a1a1a] text-[#f5f5f5] border border-gray-500 p-2 rounded-lg focus:outline-none ${
+                    className={`bg-[#1a1a1a]  text-[#f5f5f5] border border-gray-500 p-2 rounded-lg focus:outline-none ${
                       order.orderStatus === "Ready"
                         ? "text-green-500"
                         : "text-yellow-500"

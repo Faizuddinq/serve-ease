@@ -41,6 +41,7 @@ const Login = () => {
 
   return (
     <div>
+      
       <form onSubmit={handleSubmit}>
         <div>
           <label className="block text-[#ababab] mb-2 mt-3 text-sm font-medium">
@@ -82,7 +83,33 @@ const Login = () => {
           Sign in
         </button>
       </form>
+
+      <div className="flex gap-4 m-4 flex flex-col justify-center items-center">
+        <p className="text-sm text-[#ababab]">For demo/test purposes, you can use below credentials to login:</p>
+        <div className="flex gap-4">
+
+        <button
+          type="button"
+          className="bg-blue-400 text-black px-4 py-2 rounded font-bold"
+          onClick={() =>
+            setFormData({ email: "se-admin@gmail.com", password: "se-admin@gmail.com" })
+          }
+        >
+          Use Admin Credentials to Login 
+        </button>
+        <button
+          type="button"
+          className="bg-green-400 text-black px-4 py-2 rounded font-bold"
+          onClick={() =>
+            setFormData({ email: "cashier-1@gmail.com", password: "cashier-1@gmail.com" })
+          }
+        >
+          Use Cashier Credentials to Login
+        </button>
+        </div>
+      </div>
     </div>
+
   );
 };
 

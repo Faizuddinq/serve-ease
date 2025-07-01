@@ -50,7 +50,7 @@ const Auth = () => {
           <p className="text-sm text-[#ababab]">
             {isRegister ? "Already have an account?" : "Don't have an account?"}
             <a onClick={() => setIsRegister(!isRegister)} className="text-yellow-400 font-semibold hover:underline" href="#">
-              {isRegister ? "Sign in" : "Sign up"}
+              {isRegister ? " Sign in" : " Sign up"}
             </a>
           </p>
         </div>

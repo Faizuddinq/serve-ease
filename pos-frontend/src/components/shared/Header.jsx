@@ -56,7 +56,7 @@ const Header = () => {
       <div className="flex items-center gap-4">
         {userData.role === "Admin" && (
           <div onClick={() => navigate("/dashboard")} className="bg-[#1f1f1f] rounded-[15px] p-3 cursor-pointer">
-            <MdDashboard className="text-[#f5f5f5] text-2xl" />
+            <MdDashboard className="text-[#f5f5f5] text-2xl hover:text-yellow-500" />
           </div>
         )}
         <div className="bg-[#1f1f1f] rounded-[15px] p-3 cursor-pointer">
@@ -74,7 +74,7 @@ const Header = () => {
           </div>
           <IoLogOut
             onClick={handleLogout}
-            className="text-[#f5f5f5] ml-2"
+            className="text-[#f5f5f5] ml-2 hover:text-red-500"
             size={40}
           />
         </div>
