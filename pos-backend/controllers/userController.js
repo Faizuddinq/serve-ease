@@ -62,7 +62,7 @@ const login = async (req, res, next) => {
         });
 
         res.cookie('accessToken', accessToken, {
-            maxAge: 1000 * 60 * 60 *24 * 30,
+            maxAge: 1000 * 60 * 60 *24 * 30, // 30 days
             httpOnly: true,
             sameSite: 'none',
             secure: true
@@ -93,7 +93,12 @@ const getUserData = async (req, res, next) => {
 const logout = async (req, res, next) => {
     try {
         
-        res.clearCookie('accessToken');
+            // Important: match ALL cookie options when clearing
+        res.clearCookie("accessToken", {
+            httpOnly: true,
+            sameSite: "none",
+            secure: true,
+          });
         res.status(200).json({success: true, message: "User logout successfully!"});
 
     } catch (error) {
