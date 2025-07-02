@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import BottomNav from "../components/shared/BottomNav";
 import BackButton from "../components/shared/BackButton";
 import TableCard from "../components/tables/TableCard";
-import { tables } from "../constants";
+import { enqueueSnackbar } from "notistack";
+
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getTables } from "../https";
 
@@ -60,6 +61,7 @@ const Tables = () => {
         {resData?.data.data.map((table) => {
           return (
             <TableCard
+              key={table._id}
               id={table._id}
               name={table.tableNo}
               status={table.status}

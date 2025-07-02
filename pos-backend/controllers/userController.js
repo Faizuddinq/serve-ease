@@ -92,7 +92,7 @@ const getUserData = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
     try {
-        // Important: match ALL cookie options when clearing
+        
         res.clearCookie("accessToken", {
             httpOnly: true,
             sameSite: "none",
